@@ -67,7 +67,7 @@ def ema_val (subject, ema_num):
     
     dir_path = '../'
     
-    name = 'EMA/response/'+ sensor[ema_num] + "/" + sensor[ema_num]
+    name = '/EMA/response/'+ sensor[ema_num] + "/" + sensor[ema_num]
 
     
     user = '_u'+subject+'.json'
@@ -190,7 +190,6 @@ def survey_reader (surv_num):
     
     survey = 'PHQ-9.csv','panas.csv'
     dir_path = '../'
-    
     name = 'survey/'+ survey[surv_num] 
     
     full_path = dir_path + name
