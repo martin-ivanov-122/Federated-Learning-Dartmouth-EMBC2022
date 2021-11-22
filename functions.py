@@ -699,3 +699,13 @@ def matlab2python (filename, len_survey):
     f.close()
     
     return (walk_trend)
+
+def load_file(filename):
+    with open(filename) as f:
+        output = f.readlines()
+    f.close ()
+    
+    return (output)
+    
+    
+    
