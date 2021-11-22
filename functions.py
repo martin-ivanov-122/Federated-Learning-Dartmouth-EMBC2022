@@ -21,7 +21,7 @@ from math import radians, cos, sin, asin, sqrt
 # Reading GPS time value
 def GPS_csv_reader (subject, sensor_num, col, decision):
     sensor = 'activity', 'audio', 'bluetooth','conversation', 'dark','gps','phonecharge','phonelock','wifi','wifi_location'
-    dir_path = 'C:/Users/marti/FL_Darthmouth/Dartmouth Data/'
+    dir_path = '../'
     user = "_" + subject+'.csv'
     name = 'sensing/'+ sensor[sensor_num] + "/" + sensor[sensor_num]
     full_path = dir_path + name + user
@@ -44,7 +44,7 @@ def GPS_csv_reader (subject, sensor_num, col, decision):
 def sensor_val (subject, sensor_num):
     
     sensor = 'activity', 'audio', 'bluetooth','conversation', 'dark','gps','phonecharge','phonelock','wifi','wifi_location'
-    dir_path = 'C:/Users/marti/FL_Darthmouth/Dartmouth Data/'
+    dir_path = '../'
     
     if (sensor_num==2):
         name = 'sensing/'+ sensor[sensor_num] + "/bt"    
@@ -65,7 +65,7 @@ def ema_val (subject, ema_num):
     
     sensor = "Activity","Administration's response","Behavior","Exercise",	"Lab","Mood","Mood 1"	,"Mood 2",	"Sleep"	,"Social",	"Stress"
     
-    dir_path = 'C:/Users/marti/FL_Darthmouth/Dartmouth Data/'
+    dir_path = '../'
     
     name = 'EMA/response/'+ sensor[ema_num] + "/" + sensor[ema_num]
 
@@ -189,7 +189,7 @@ def stress_active(subject, ema_num):
 def survey_reader (surv_num):
     
     survey = 'PHQ-9.csv','panas.csv'
-    dir_path = 'C:/Users/marti/FL_Darthmouth/Dartmouth Data/'
+    dir_path = '../'
     
     name = 'survey/'+ survey[surv_num] 
     
