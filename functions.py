@@ -21,7 +21,7 @@ from math import radians, cos, sin, asin, sqrt
 # Reading GPS time value
 def GPS_csv_reader (subject, sensor_num, col, decision):
     sensor = 'activity', 'audio', 'bluetooth','conversation', 'dark','gps','phonecharge','phonelock','wifi','wifi_location'
-    dir_path = 'C:/Users/marto/Dartmouth Data/'
+    dir_path = 'C:/Users/marto/FL and Dartmouth/'
     user = "_" + subject+'.csv'
     name = 'sensing/'+ sensor[sensor_num] + "/" + sensor[sensor_num]
     full_path = dir_path + name + user
@@ -44,7 +44,7 @@ def GPS_csv_reader (subject, sensor_num, col, decision):
 def sensor_val (subject, sensor_num):
     
     sensor = 'activity', 'audio', 'bluetooth','conversation', 'dark','gps','phonecharge','phonelock','wifi','wifi_location'
-    dir_path = 'C:/Users/marto/Dartmouth Data/'
+    dir_path = 'C:/Users/marto/FL and Dartmouth/'
     
     if (sensor_num==2):
         name = 'sensing/'+ sensor[sensor_num] + "/bt"    
@@ -65,7 +65,7 @@ def ema_val (subject, ema_num):
     
     sensor = "Activity","Administration's response","Behavior","Exercise",	"Lab","Mood","Mood 1"	,"Mood 2",	"Sleep"	,"Social",	"Stress"
     
-    dir_path = 'C:/Users/marto/Dartmouth Data/'
+    dir_path = 'C:/Users/marto/FL and Dartmouth/'
     
     name = '/EMA/response/'+ sensor[ema_num] + "/" + sensor[ema_num]
 
@@ -189,7 +189,7 @@ def stress_active(subject, ema_num):
 def survey_reader (surv_num):
     
     survey = 'PHQ-9.csv','panas.csv'
-    dir_path = 'C:/Users/marto/Dartmouth Data/'
+    dir_path = 'C:/Users/marto/FL and Dartmouth/'
     name = 'survey/'+ survey[surv_num] 
     
     full_path = dir_path + name
@@ -225,15 +225,15 @@ def phq_severity (phq):
     output = [] 
     for i in phq:
         if (i <=4):
-            output.append ("Normal")
+            output.append (0)
         elif (i>=5 and i<=9):
-            output.append ("Mild")
+            output.append (1)
         elif (i>=10 and i<=14):
-            output.append ("Moderate")
+            output.append (2)
         elif (i>=15 and i<=19):
-            output.append ("Moderate to severe")
+            output.append (3)
         elif (i>=20 and i<=27):
-            output.append ("Severe")
+            output.append (4)
         else:
             print ("Unvalid")
     return output
