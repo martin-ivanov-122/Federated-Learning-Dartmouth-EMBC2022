@@ -101,6 +101,88 @@ def update_v(M, z, u, v, gamma, s):
     
     return output
     
+# In[]:
+
+################ For testing purposes, use the following metrics: ################
+    
+    # M = M
+    # z = z
+    # u = U
+    # v = V
+    # gamma = gamma_z 
+    # s = sz
+
+################################################################################
+
+
+def update_z (M,z,u,v,gamma,s):
+    
+    grad = np.zeros((len(z),1))
+    tmp = np.zeros ((len(z),1))
+    
+    for i in range (len(M)):
+            
+            ## GRAD
+            
+            # z .* u(:,i) * v{i}' - M{i}
+            h1 = (z.T * u[:,i])
+            h2 = h1.T * (v[i][0]).T
+            h3 = h2 - M[i] 
+            
+            # h3 * v{i} 
+            h4 = np.matmul (h3 , v[i][0])
+            h5 = (h4.T*u[:,i]).T 
+            
+            grad += h5
+        
+            ## TMP
+            
+            t1 = np.matmul (v[i][0].T,v[i][0])
+            t2 = t1 * u[:,i]
+            t3 = t2*u[:,i]
+            
+            tmp += t3.T
+            
+            
+            
+    lip = np.sqrt (np.matmul (tmp.T, tmp))
+    
+    if (lip == 0):
+        z = np.zeros ((len (z),1))
+        
+    z = z - 1/(lip*gamma) * grad
+    
+    z = map_python (z,s)
+
+    
+    return (z)
+
+
+
+# In[]:
+    
+################ OBJECTIVE FUNCTION ################
+
+####################################################
+
+    
+def objective (M,z,U,V):
+    obj = 0;
+    for i in range (len(M)):
+        
+        # MAT
+        h1 = U[:,i]*z.T
+        h2 = (h1.T*V[i][0].T)        
+
+        mat = M[i] - h2 
+        
+        # OBJ
+        self_mat = np.matmul (mat.T,mat)
+        
+        obj += np.sum(np.diag (self_mat))
+        
+        
+    return obj
 
 
 # In[4]:
@@ -177,6 +259,9 @@ ini_v2 = 1
 
 # In[7]:
 
+# DEBUG FCT
+debug = 0
+
 
 # Inside the mvlrrl0 function
 sz = sz1
@@ -239,77 +324,53 @@ tmp = map_python (U[:,0], sz)
 z[tmp == 0] = 0
 
 
-# line 76 - 
+# line 76 - 83
 
 if (nView > 1):
     for iView in range  (1,nView):
         V[iView] = [update_v (M[iView], z, U[:, iView], V[iView], gamma_v, sv[iView][0])]
         U[:, iView] = update_u(M[iView], z, U[:, iView], V[iView], gamma_u)
 
-
-
     # Update Z
-
     z = update_z (M,z,U,V,gamma_z,sz)     
 
 
+# line 85 
+
+obj = objective (M,z,U,V)
 
 
-################ For testing purposes, use the following metrics: ################
+# line 90
+
+for iTer in range (int (maxIter)):
+    pre_obj =  copy.copy(obj)
     
-    # M = M
-    # z = z
-    # u = U
-    # v = V
-    # gamma = gamma_z 
-    # s = sz
-
-################################################################################
-
-
-def update_z (M,z,u,v,gamma,s):
+    pre_z =  copy.copy(z)
     
-    grad = np.zeros((len(z),1))
-    tmp = np.zeros ((len(z),1))
-    
-    for i in range (len(M)):
-            
-            ## GRAD
-            
-            # z .* u(:,i) * v{i}' - M{i}
-            h1 = (z.T * u[:,i])
-            h2 = h1.T * (v[i][0]).T
-            h3 = h2 - M[i] 
-            
-            # h3 * v{i} 
-            h4 = np.matmul (h3 , v[i][0])
-            h5 = (h4.T*u[:,i]).T 
-            
-            grad += h5
+    # Given z, update U and V
+    for iView in range (nView):
+        V[iView] = [update_v (M[iView], z, U[:, iView], V[iView], gamma_v, sv[iView][0])]
+        U[:, iView] = update_u(M[iView], z, U[:, iView], V[iView], gamma_u)
         
-            ## TMP
-            
-            t1 = np.matmul (v[i][0].T,v[i][0])
-            t2 = t1 * u[:,i]
-            t3 = t2*u[:,i]
-            
-            tmp += t3.T
-            
-            
-            
-    lip = np.sqrt (np.matmul (tmp.T, tmp))
     
-    if (lip == 0):
-        z = np.zeros ((len (z),1))
+    # Given U, V, update z
+    z = update_z (M,z,U,V,gamma_z,sz)     
+    
+    # Calc the objective fct
+    obj = objective (M,z,U,V)
+    
+    if (debug == 1):
+        print ('Iteration: %d \n' %iTer)
+        print ('Objective value %f \n' %obj)
         
-    z = z - 1/(lip*gamma) * grad
+    if (np.linalg.norm(pre_z-z) < threshold):
+        break
     
-    z = map_python (z,s)
+    
+
 
     
-    return (z)
-
-
+    
 
 
 
