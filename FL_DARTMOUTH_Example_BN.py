@@ -163,31 +163,13 @@ for element in test_batched:
     print (element)
 
 
-# ## 3 Layer MLP (multi-layer perception) model
-
-# In[145]:
-
-
-class SimpleMLP:
-    @staticmethod
-    def build(shape, classes):
-        model = Sequential()
-        model.add(Dense(200, input_shape=(shape,)))
-        model.add(Activation("relu"))
-        model.add(Dense(200))
-        model.add(Activation("relu"))
-        model.add(Dense(classes))
-        model.add(Activation("softmax"))
-        return model
-
-
 # ## Declearing model optimizer, loss function and a metric
 
 # In[146]:
 
 
 #Learning Rate
-lr = 0.01 
+lr = 1 
 
 # number global epochs (aggregations)
 comms_round = 10
@@ -261,43 +243,32 @@ for comm_round in range(comms_round):
 
     #test global model and print out metrics after each communications round
     for(X_test, Y_test) in test_batched:
+        
+        global_acc, global_loss, y_predict = test_model(X_test, Y_test, global_model, comm_round)
         print(Y_test)
-        global_acc, global_loss = test_model(X_test, Y_test, global_model, comm_round)
+        print (y_predict)
+
+# # In[ ]:  SGD Comparison to Federated Learning Accuracy
 
 
-# In[ ]:
+# #Creating SGD Dataset with all hyperparameters equal to that of FL, however with a batch size of 320 as there are not multiple independent models or multiple clients to have said models
+# SGD_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(len(y_train)).batch(320) 
 
+# #Initializing Model
+# smlp_SGD = SimpleMLP()
 
+# #Generating model with a shape of 784, and 10 classes
+# SGD_model = smlp_SGD.build(shape, classes) 
 
+# #Compilation of Model using model paramaters
+# SGD_model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
 
+# # fit the SGD training data to model
+# _ = SGD_model.fit(SGD_dataset, epochs=100, verbose=0)
 
-# # SGD Comparison to Federated Learning Accuracy
-
-# In[ ]:
-
-
-#Creating SGD Dataset with all hyperparameters equal to that of FL, however with a batch size of 320 as there are not multiple independent models or multiple clients to have said models
-SGD_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(len(y_train)).batch(320) 
-
-#Initializing Model
-smlp_SGD = SimpleMLP()
-
-#Generating model with a shape of 784, and 10 classes
-SGD_model = smlp_SGD.build(shape, classes) 
-
-#Compilation of Model using model paramaters
-SGD_model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
-
-# fit the SGD training data to model
-_ = SGD_model.fit(SGD_dataset, epochs=100, verbose=0)
-
-#test the SGD global model and print out metrics
-for(X_test, Y_test) in test_batched:
-        SGD_acc, SGD_loss = test_model(X_test, Y_test, SGD_model, 1)
-
-
-# In[ ]:
-
+# #test the SGD global model and print out metrics
+# for(X_test, Y_test) in test_batched:
+#         SGD_acc, SGD_loss = test_model(X_test, Y_test, SGD_model, 1)
 
 
 
