@@ -80,7 +80,7 @@ def create_clients(image_list, label_list, num_clients=10, initial='clients'):
 
 
 
-def batch_data(data_shard, bs=32):
+def batch_data(data_shard, bs):
     '''Takes in a clients data shard and create a tfds object off it
     args:
         shard: a data, label constituting a client's data shard
