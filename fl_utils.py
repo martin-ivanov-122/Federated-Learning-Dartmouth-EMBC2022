@@ -142,7 +142,7 @@ def test_model(X_test, Y_test,  model, comm_round):
     cce = tf.keras.losses.CategoricalCrossentropy(from_logits=True)
     #logits = model.predict(X_test, batch_size=100)
     logits = model.predict(X_test)
-    loss = cce(Y_test, logits)
+    # loss = cce(Y_test, logits)
     acc = accuracy_score(logits, Y_test)
-    print('comm_round: {} | global_acc: {:.3%} | global_loss: {}'.format(comm_round, acc, loss))
-    return acc, loss, logits
+   
+    return acc, logits

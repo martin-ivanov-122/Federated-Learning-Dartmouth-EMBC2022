@@ -145,8 +145,8 @@ clients_batched['client_1']
 # In[142]:
 
 
-for element in clients_batched['client_1']:
-    print (element)
+# for element in clients_batched['client_1']:
+#     print (element)
 
 
 # In[143]:
@@ -159,8 +159,8 @@ test_batched = tf.data.Dataset.from_tensor_slices((X_test, y_test)).batch(len(y_
 # In[144]:
 
 
-for element in test_batched:
-    print (element)
+# for element in test_batched:
+#     print (element)
 
 
 # ## Declearing model optimizer, loss function and a metric
@@ -186,14 +186,11 @@ optimizer = SGD(learning_rate=lr, decay=lr / comms_round, momentum=0.9)
 
 # # Model Aggregation (Federated Averaging) and Testing 
 
-# In[147]:
-
-
-shape = 21 # Num of Feats
+shape = ft_matrix.shape[1] # Num of Feats
 classes = 1 # Time series therefore is 1
 
 
-# In[150]:
+# In[150]: FL BEGIN
 
 
 #initialize global model
@@ -244,31 +241,54 @@ for comm_round in range(comms_round):
     #test global model and print out metrics after each communications round
     for(X_test, Y_test) in test_batched:
         
-        global_acc, global_loss, y_predict = test_model(X_test, Y_test, global_model, comm_round)
+        global_acc, y_predict = test_model(X_test, Y_test, global_model, comm_round)
         print(Y_test)
         print (y_predict)
+        print('comm_round: {} | global_acc: {:.3%}'.format(comm_round, global_acc))
 
-# # In[ ]:  SGD Comparison to Federated Learning Accuracy
 
 
-# #Creating SGD Dataset with all hyperparameters equal to that of FL, however with a batch size of 320 as there are not multiple independent models or multiple clients to have said models
-# SGD_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(len(y_train)).batch(320) 
+# # In[MLP Testing for Dataset]:
+# # X_train, X_test, y_train, y_test
+# # SimpleMLP
 
-# #Initializing Model
-# smlp_SGD = SimpleMLP()
+# MLP_Model = SimpleMLP()
+# model = MLP_Model.build(shape, classes)
 
-# #Generating model with a shape of 784, and 10 classes
-# SGD_model = smlp_SGD.build(shape, classes) 
+# # Train the model
+# model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+# model.fit(X_train, y_train, epochs=10, batch_size=5, verbose=1, validation_split=0.2)
 
-# #Compilation of Model using model paramaters
-# SGD_model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
+# # Evaluate
+# test_results = model.evaluate(X_test, Y_test, verbose=1)
+# print(f'Test results - Loss: {test_results[0]} - Accuracy: {test_results[1]}%')
 
-# # fit the SGD training data to model
-# _ = SGD_model.fit(SGD_dataset, epochs=100, verbose=0)
 
-# #test the SGD global model and print out metrics
-# for(X_test, Y_test) in test_batched:
-#         SGD_acc, SGD_loss = test_model(X_test, Y_test, SGD_model, 1)
+
+# # In[SVM Testing for Dataset]:
+# import numpy as np
+# from sklearn.datasets import make_classification
+# from sklearn.model_selection import train_test_split
+# from sklearn import svm
+
+# clf = svm.SVC(kernel ='linear')
+
+# # Fit and Train
+# clf.fit(X_train, y_train)
+
+# # Evaluate
+# y_pred = clf.predict(X_test)
+# acc = accuracy_score(y_pred, Y_test)
+
+# print ('Accuracy: %.2f' %(acc))
+
+# # https://stats.stackexchange.com/questions/39243/how-does-one-interpret-svm-feature-weights
+
+
+
+
+
+
 
 
 
