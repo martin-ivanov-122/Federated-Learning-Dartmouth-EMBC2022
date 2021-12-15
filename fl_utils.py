@@ -80,7 +80,7 @@ def create_clients(image_list, label_list, num_clients=10, initial='clients'):
 
 
 
-def batch_data(data_shard, bs=32):
+def batch_data(data_shard, bs):
     '''Takes in a clients data shard and create a tfds object off it
     args:
         shard: a data, label constituting a client's data shard
@@ -97,9 +97,9 @@ class SimpleMLP:
     @staticmethod
     def build(shape, classes):
         model = Sequential()
-        model.add(Dense(200, input_shape=(shape,)))
+        model.add(Dense(2, input_shape=(shape,)))
         model.add(Activation("relu"))
-        model.add(Dense(200))
+        model.add(Dense(2))
         model.add(Activation("relu"))
         model.add(Dense(classes))
         model.add(Activation("softmax"))
@@ -142,12 +142,7 @@ def test_model(X_test, Y_test,  model, comm_round):
     cce = tf.keras.losses.CategoricalCrossentropy(from_logits=True)
     #logits = model.predict(X_test, batch_size=100)
     logits = model.predict(X_test)
-    loss = cce(Y_test, logits)
-    acc = accuracy_score(tf.argmax(logits, axis=1), tf.argmax(Y_test, axis=1))
-    print('comm_round: {} | global_acc: {:.3%} | global_loss: {}'.format(comm_round, acc, loss))
-    return acc, loss
-
-
-def addition_test (x,y):
-  return (x+y)
-
+    # loss = cce(Y_test, logits)
+    acc = accuracy_score(logits, Y_test)
+   
+    return acc, logits
